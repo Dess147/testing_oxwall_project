@@ -3,6 +3,10 @@ import os
 import pytest
 import allure
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.microsoft import EdgeDriverManager
+from webdriver_manager.microsoft import IEDriverManager
 
 from db_connector import OxwallDB
 from pages.pages import OxwallApp
@@ -13,6 +17,8 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 def pytest_addoption(parser):
     parser.addoption("--config", action="store", default="config.json",
                      help="config file")
+    parser.addoption("--browser", action="store", default="Chrome",
+                     help="browser for web tests")
 
 @pytest.fixture(scope="session")
 def config(request):
@@ -22,9 +28,21 @@ def config(request):
 
 
 @pytest.fixture()
-def driver(selenium):
-    driver = selenium
+def driver(request):
+    """Open browser driver settings"""
+    option = request.config.getoption("--browser")
+    if option.lower() == "chrome":
+        driver = webdriver.Chrome(ChromeDriverManager().install())
+    elif option == "firefox":
+        driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+    elif option == "edge":
+        driver = webdriver.Edge(EdgeDriverManager().install())
+    elif option == "ie":
+        driver = webdriver.Ie(IEDriverManager().install())
+    else:
+        raise ValueError("Unrecognized browser {}".format(option))
     driver.implicitly_wait(5)
+    driver.maximize_window()
     yield driver
     driver.quit()
 
