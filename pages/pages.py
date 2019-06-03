@@ -127,8 +127,8 @@ class InternalPages(BasePage):
 
     def login_as(self, user):
         sign_in_page = self.sign_in_click()
-        sign_in_page.input_username(user)
-        sign_in_page.input_password(user)
+        sign_in_page.input_username(user.username)
+        sign_in_page.input_password(user.password)
         dashboard_page = sign_in_page.submit_form()
         return dashboard_page  # This can be deleted in App (page aggregator) approach
 
