@@ -17,6 +17,8 @@ status_text_list.append(random_string())
 
 @allure.feature("Status feature")
 @allure.story("Create status")
+@allure.severity(allure.severity_level.NORMAL)
+@pytest.mark.regression
 @pytest.mark.parametrize("input_text", status_text_list)
 def test_create_status(driver, logged_user, input_text, db):
     dashboard_page = DashboardPage(driver)
